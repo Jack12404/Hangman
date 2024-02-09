@@ -5,6 +5,7 @@ screen = pygame.display.set_mode((1280, 720))
 pygame.display.set_caption("Name Of The game")
 clock = pygame.time.Clock()
 font = pygame.font.Font(None, 64)
+# testing words
 #main_dir = os.path.split(os.path.abspath(__file__))[0]
 #data_dir = os.path.join(main_dir, "data")
 
