@@ -11,68 +11,61 @@ font = pygame.font.Font(None, 64)
 
 def main():
     # pygame setup    
-    running = True
-
-    # Game background
-    background_image = pygame.image.load("./Hangman.jpg")
-    Lose_Screen  = pygame.image.load("./Lose Screen.jpg")
-    Win = pygame.image.load("./Win.jpg")
-
-    background_image = pygame.transform.scale(background_image,(1280, 720))
-    Lose_Screen = pygame.transform.scale(Lose_Screen,(1280, 720))
-    Win = pygame.transform.scale(Win,(1280, 720))
-
-    screen.blit(background_image,(0,0))
-
-    # Hangman global trackers 
+    # p1 = PlayerWasd("./exampleShroom.png")
+    # p2 = PlayerMouse("./sprite.png")
     chosenWord = sportWords()
     uniqueChar = unqiueCharacters(chosenWord)
     wrongGuessCount = 0
     correctLetters = 0
     usedLetters = []
-    writeToScreen("Incorrect guess", 800 , 50, size = 100)
-    writeToScreen("Welcome to hangman!", 800 , 300, size = 30)
-    writeToScreen("Guess the hidden sports related word to win", 800 , 330, size = 30)
-    writeToScreen("Making 6 incorrect guess means you lose", 800 , 360, size = 30)
-
+    # allsprites = pygame.sprite.RenderPlain((p1,p2))
+    running = True
+    background_image = pygame.image.load("./Hangman.jpg")
+    background_image = pygame.transform.scale(background_image,(1280, 720))
     while running:
         # poll for events
         # pygame.QUIT event means the user clicked X to close your window
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-            if event.type == pygame.KEYDOWN and wrongGuessCount != 6 and correctLetters != uniqueChar:
+            if event.type == pygame.KEYDOWN:
                 if event.key in range(97,123):
                     guessLetter = chr(event.key)
                     if guessLetter not in usedLetters:
                         usedLetters.append(guessLetter)
                         if check(guessLetter, chosenWord):
-                            # Draws the letter in the place where it is in the word
                             correctLetters += 1
-                            locations = findLocation(chosenWord, guessLetter)
-                            for i in locations:
-                                writeToScreen(guessLetter, 75 * i + 400, 590, size = 100)
+                            print(correctLetters)
+                            findLocation(chosenWord, guessLetter)
+                            #draw location of character
                         else:
-                            # Draws apart of the body for each incorrect guess
                             wrongGuessCount += 1  
-                            writeToScreen(guessLetter, 75 * (len(usedLetters) - correctLetters) + 540, 130, size = 100)
-                            printBody(wrongGuessCount)
+                            print(wrongGuessCount)
+                            #draw a body part based on incorrect count
 
         
 
-        # Puts up the lose or win background
+        # fill the screen with a color to wipe away anything from last frame
+        screen.fill("purple")
+        screen.blit(background_image,(0,0))
         drawWordLine(chosenWord)
+        #image,rect = load_image("Hangman.jpg",100,100)
+        # writeToScreen("_", 50, 350, size = 100)
+        # writeToScreen("_", 100,100,size = 100)
         if wrongGuessCount == 6:
             #draw losing screen
-            screen.blit(Lose_Screen,(0,0))
-
+            print("you lose")
+            running = False
         if correctLetters == uniqueChar:
-            #draw win screen
-            screen.blit(Win,(0,0))
-            
+            #draw win screen 
+            print("you win")
+            running = False
     #################################################################
         # RENDER YOUR GAME HERE
-            
+        # allsprites.update()
+        # allsprites.draw(screen)
+
+
     ##############################################################
         # flip() the display to put your work on screen
         pygame.display.flip()
@@ -136,18 +129,15 @@ def load_image(name,x, y, colorkey=None, scale=1):
         rect.topleft = (x, y)
     return image, rect
 
-#################################################################
-##                   HANGMAN CODE                              ##
-#################################################################
-
 #Gets a random sports related word
+#chosenWord = random.choice(list of words)
 def sportWords():
     sport = ["soccer", "basketball","football", "tennis", "baseball",
              "lacrosse", "golf", "volleyball","badminton","hockey"]
     choosenWord = random.choice(sport)
     return choosenWord
     
-# Gets the number of unique characters in the choosen word
+# gets the number of unique characters in the choosen word
 def unqiueCharacters(chosenWord):
     uniqueChar = []
     for i in chosenWord:
@@ -166,28 +156,32 @@ def findLocation(chosenWord, userGuess):
 # Checks if the users guess character is in the choosen word
 def check(userGuess, chosenWord):
     if userGuess.lower() in chosenWord:
+        print(f'This letter is in the word!')
         return True
     else:
+        print("Incorrect guess! ")
         return False
+    
 
-# Draws a number of lines representing number of characters in choosen word
+#checks if you lose
+def lose(correctLetters, wrongGuessCount):
+    while correctLetters < unqiueCharacters:
+        if wrongGuessCount == 6:
+            print("You lost, try again!")
+            break
+
 def drawWordLine(chosenWord):
     for i in range(0, len(chosenWord)):
-        writeToScreen("_", 75 * i + 400, 600, size = 100)
-        
-# Draws a hangman body part based on number of incorrect guesses
-def printBody(wrongGuesses):
-    if(wrongGuesses == 1):
-        writeToScreen("O", 400,200,150)
-    elif(wrongGuesses == 2):
-        writeToScreen("|", 400,275,175)
-    elif(wrongGuesses == 3):
-        writeToScreen("/", 380,300,175)
-    elif(wrongGuesses == 4):
-        writeToScreen("\\", 420,300,175)
-    elif(wrongGuesses == 5):
-        writeToScreen("/", 380,375,175)
-    elif(wrongGuesses == 6):
-        writeToScreen("\\", 420,375,175)
+        writeToScreen("_", 50 * i, 350, size = 100)
+
+#Game logic:
+#   6 incorrect guess means you lose
+#   You win if you get the word under 6 incorrect guess
+
+
+#Game visuals
+#   draw "hangman" body parts for each incorrect guess
+#   hidden word under person
+#   un-gussed and gussed characters to the right of the person, crossed out means used
 
 main()
