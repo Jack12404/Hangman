@@ -154,7 +154,7 @@ def unqiueCharacters(chosenWord):
         if i not in uniqueChar:
             uniqueChar.append(i)
     return len(uniqueChar)
-
+#test
 # Returns the indexs of where the user guessed correctly at 
 def findLocation(chosenWord, userGuess):
     locations = []
